@@ -1,8 +1,8 @@
 const { Sequelize } = require('sequelize');
 
 const sequelize = new Sequelize({
+    database: 'yoga',
     dialect: 'mysql',
-    storage: './yoga.db',
     username: 'root',
     password: 'root@YASH13'
 });

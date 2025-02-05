@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
-const Participant = require('./Participant');
-const Batch = require('./Batch');
+const sequelize = require('../config/db');
+const Participant = require('./participant.model');
+const Batch = require('./batch.model');
 
 const Enrollment = sequelize.define('Enrollment', {
     enrollment_id: {
@@ -19,7 +19,6 @@ const Enrollment = sequelize.define('Enrollment', {
     },
 });
 
-// Relationships
 Enrollment.belongsTo(Participant, { foreignKey: 'participant_id' });
 Enrollment.belongsTo(Batch, { foreignKey: 'batch_id' });
 

@@ -10,7 +10,13 @@ const Batch = require('./models/batch.model');
 const app = express();
 app.use(bodyParser.json());
 
-
+sequelize.sync({ force: true }).then(async () => {
+    console.log('Database synced');
+    await insertDefaultBatches();
+    app.listen(3000, () => {
+        console.log('Server is running on port 3000');
+    });
+});
 
 
 
@@ -67,10 +73,3 @@ app.post('/enroll', async (req, res) => {
 });
 
 
-sequelize.sync({ force: true }).then(async () => {
-    console.log('Database synced');
-    await insertDefaultBatches();
-    app.listen(3000, () => {
-        console.log('Server is running on port 3000');
-    });
-});
