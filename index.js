@@ -5,18 +5,15 @@ const Participant = require('./models/participant.model');
 const Enrollment = require('./models/enrollment.model');
 const Payment = require('./models/payment.model');
 const Batch = require('./models/batch.model');
+const cors = require("cors")
+const moment = require('moment');
 
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors())
 
-sequelize.sync({ force: true }).then(async () => {
-    console.log('Database synced');
-    await insertDefaultBatches();
-    app.listen(3000, () => {
-        console.log('Server is running on port 3000');
-    });
-});
+
 
 
 
@@ -37,22 +34,27 @@ async function insertDefaultBatches() {
     }
 }
 
+app.get('/', async (req, res) => {
+    return res.send('Yoga Backend')
+})
+
 app.post('/enroll', async (req, res) => {
     const { name, date_of_birth, contact_number, email, batch_id, month } = req.body;
 
-    if (!name || !date_of_birth || !contact_number || !email || !batch_id || !month) {
-        return res.status(400).json({ error: 'All fields are required' });
-    }
-
-    const currentDate = moment();
-    const dob = moment(date_of_birth, 'YYYY-MM-DD');
-    const age = currentDate.diff(dob, 'years');
-
-    if (age < 18 || age > 65) {
-        return res.status(400).json({ error: 'Age must be between 18 and 65 to enroll.' });
-    }
 
     try {
+        if (!name || !date_of_birth || !contact_number || !email || !batch_id || !month) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        const currentDate = moment();
+        const dob = moment(date_of_birth, 'YYYY-MM-DD');
+        const age = currentDate.diff(dob, 'years');
+
+        if (age < 18 || age > 65) {
+            return res.status(400).json({ error: 'Age must be between 18 and 65 to enroll.' });
+        }
+
         const participant = await Participant.create({ name, date_of_birth, contact_number, email });
 
         const enrollment = await Enrollment.create({
@@ -81,3 +83,10 @@ app.post('/enroll', async (req, res) => {
 });
 
 
+sequelize.sync({ force: true }).then(async () => {
+    console.log('Database synced');
+    await insertDefaultBatches();
+    app.listen(5050, () => {
+        console.log('Server is running on port 5050');
+    });
+});
