@@ -44,6 +44,14 @@ app.post('/enroll', async (req, res) => {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
+    const currentDate = moment();
+    const dob = moment(date_of_birth, 'YYYY-MM-DD');
+    const age = currentDate.diff(dob, 'years');
+
+    if (age < 18 || age > 65) {
+        return res.status(400).json({ error: 'Age must be between 18 and 65 to enroll.' });
+    }
+
     try {
         const participant = await Participant.create({ name, date_of_birth, contact_number, email });
 
